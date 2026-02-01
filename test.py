@@ -58,9 +58,14 @@ def main():
     # We won't block on this failing if no key, just try to init.
     print("\n--- Testing SambaNova Provider ---")
     try:
-        # Default cheap model
-        samba = SambaNovaLLM(model="Meta-Llama-3.1-8B-Instruct") 
-        print("SambaNovaLLM initialized successfully.")
+        # Customization Test
+        samba = SambaNovaLLM(
+            model="Meta-Llama-3.1-8B-Instruct",
+            system_prompt="You are a pirate.",
+            temperature=0.7,
+            max_tokens=100
+        ) 
+        print("SambaNovaLLM initialized successfully with customization.")
         
         # Optionally try to run if key exists
         if os.environ.get("SAMBANOVA_API_KEY"):

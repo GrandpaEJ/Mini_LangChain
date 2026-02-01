@@ -11,6 +11,8 @@ pub struct SambaNovaProvider {
     pub system_prompt: String,
     pub temperature: Option<f64>,
     pub max_tokens: Option<u32>,
+    pub top_k: Option<u32>,
+    pub top_p: Option<f64>,
 }
 
 impl SambaNovaProvider {
@@ -19,7 +21,9 @@ impl SambaNovaProvider {
         model: String,
         system_prompt: Option<String>,
         temperature: Option<f64>,
-        max_tokens: Option<u32>
+        max_tokens: Option<u32>,
+        top_k: Option<u32>,
+        top_p: Option<f64>,
     ) -> Result<Self> {
         let key = api_key.or_else(|| env::var("SAMBANOVA_API_KEY").ok())
             .ok_or_else(|| anyhow!("SambaNova API Key must be provided or set in SAMBANOVA_API_KEY env var"))?;
@@ -31,6 +35,8 @@ impl SambaNovaProvider {
             system_prompt: system_prompt.unwrap_or_else(|| "You are a helpful assistant.".to_string()),
             temperature,
             max_tokens,
+            top_k,
+            top_p,
         })
     }
 }
@@ -60,6 +66,12 @@ impl LLM for SambaNovaProvider {
         }
         if let Some(max_t) = self.max_tokens {
             body.as_object_mut().unwrap().insert("max_tokens".to_string(), json!(max_t));
+        }
+        if let Some(k) = self.top_k {
+            body.as_object_mut().unwrap().insert("top_k".to_string(), json!(k));
+        }
+        if let Some(p) = self.top_p {
+            body.as_object_mut().unwrap().insert("top_p".to_string(), json!(p));
         }
 
         let resp = self.client.post(url)

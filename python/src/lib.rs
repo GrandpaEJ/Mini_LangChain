@@ -88,15 +88,17 @@ struct SambaNovaLLM {
 #[pymethods]
 impl SambaNovaLLM {
     #[new]
-    #[pyo3(signature = (model, api_key=None, system_prompt=None, temperature=None, max_tokens=None))]
+    #[pyo3(signature = (model, api_key=None, system_prompt=None, temperature=None, max_tokens=None, top_k=None, top_p=None))]
     fn new(
         model: String, 
         api_key: Option<String>,
         system_prompt: Option<String>,
         temperature: Option<f64>,
-        max_tokens: Option<u32>
+        max_tokens: Option<u32>,
+        top_k: Option<u32>,
+        top_p: Option<f64>
     ) -> PyResult<Self> {
-        let provider = SambaNovaProvider::new(api_key, model, system_prompt, temperature, max_tokens)
+        let provider = SambaNovaProvider::new(api_key, model, system_prompt, temperature, max_tokens, top_k, top_p)
             .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
             
         Ok(Self {
