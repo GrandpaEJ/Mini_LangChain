@@ -7,7 +7,7 @@ pub mod rag;
 pub mod agent;
 pub mod utils;
 
-use llm::SambaNovaLLM;
+use llm::{SambaNovaLLM, OpenAILLM, AnthropicLLM, GoogleGenAILLM, OllamaLLM};
 use chain::{Chain, PromptTemplate};
 use memory::{ConversationBufferMemory, InMemoryCache};
 use rag::{Document, TextLoader, MockEmbeddings, InMemoryVectorStore};
@@ -20,6 +20,10 @@ fn mini_langchain(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<InMemoryCache>()?;
     m.add_class::<Chain>()?;
     m.add_class::<SambaNovaLLM>()?;
+    m.add_class::<OpenAILLM>()?;
+    m.add_class::<AnthropicLLM>()?;
+    m.add_class::<GoogleGenAILLM>()?;
+    m.add_class::<OllamaLLM>()?;
     m.add_class::<ConversationBufferMemory>()?;
     m.add_class::<Document>()?;
     m.add_class::<TextLoader>()?;

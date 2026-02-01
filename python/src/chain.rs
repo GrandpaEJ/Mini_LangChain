@@ -5,7 +5,7 @@ use mini_langchain_core::prompt::PromptTemplate as CorePromptTemplate;
 use mini_langchain_core::chain::LLMChain as CoreLLMChain;
 use mini_langchain_core::llm::LLM;
 
-use crate::llm::{SambaNovaLLM, PyLLMBridge};
+use crate::llm::{SambaNovaLLM, OpenAILLM, AnthropicLLM, GoogleGenAILLM, OllamaLLM, PyLLMBridge};
 use crate::memory::{ConversationBufferMemory, InMemoryCache};
 
 #[pyclass]
@@ -37,9 +37,17 @@ impl Chain {
     #[new]
     #[pyo3(signature = (prompt, llm_model, memory=None))]
     fn new(py: Python<'_>, prompt: &PromptTemplate, llm_model: PyObject, memory: Option<&ConversationBufferMemory>) -> PyResult<Self> {
-        // Try to extract SambaNovaLLM
+        // Try to extract known Rust LLMs
         let llm: Arc<dyn LLM> = if let Ok(samba) = llm_model.extract::<SambaNovaLLM>(py) {
              samba.inner.clone()
+        } else if let Ok(openai) = llm_model.extract::<OpenAILLM>(py) {
+             openai.inner.clone()
+        } else if let Ok(claude) = llm_model.extract::<AnthropicLLM>(py) {
+             claude.inner.clone()
+        } else if let Ok(gemini) = llm_model.extract::<GoogleGenAILLM>(py) {
+             gemini.inner.clone()
+        } else if let Ok(ollama) = llm_model.extract::<OllamaLLM>(py) {
+             ollama.inner.clone()
         } else {
              // Fallback to Python Bridge
              Arc::new(PyLLMBridge { py_obj: llm_model })

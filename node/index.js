@@ -310,9 +310,13 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { SambaNovaLlm, PromptTemplate, Chain, ConversationBufferMemory, Document, TextLoader, MockEmbeddings, InMemoryVectorStore, AgentExecutor } = nativeBinding
+const { SambaNovaLLM, OpenAILLM, AnthropicLLM, GoogleGenAILLM, OllamaLLM, PromptTemplate, Chain, ConversationBufferMemory, Document, TextLoader, MockEmbeddings, InMemoryVectorStore, AgentExecutor } = nativeBinding
 
-module.exports.SambaNovaLlm = SambaNovaLlm
+module.exports.SambaNovaLLM = SambaNovaLLM
+module.exports.OpenAILLM = OpenAILLM
+module.exports.AnthropicLLM = AnthropicLLM
+module.exports.GoogleGenAILLM = GoogleGenAILLM
+module.exports.OllamaLLM = OllamaLLM
 module.exports.PromptTemplate = PromptTemplate
 module.exports.Chain = Chain
 module.exports.ConversationBufferMemory = ConversationBufferMemory

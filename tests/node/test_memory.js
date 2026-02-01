@@ -1,4 +1,4 @@
-const { Chain, PromptTemplate, SambaNovaLlm: SambaNovaLLM, ConversationBufferMemory, TextLoader } = require('../../node/index.js');
+const { Chain, PromptTemplate, SambaNovaLLM, ConversationBufferMemory, TextLoader } = require('../../node/index.js');
 const path = require('path');
 
 async function testMemory() {

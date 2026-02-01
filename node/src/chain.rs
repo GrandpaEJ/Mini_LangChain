@@ -2,11 +2,11 @@ use napi_derive::napi;
 use std::sync::{Arc, Mutex};
 use mini_langchain_core::prompt::PromptTemplate as CorePromptTemplate;
 use mini_langchain_core::chain::LLMChain as CoreLLMChain;
+use mini_langchain_core::llm::LLM;
 use std::collections::HashMap;
-use napi::Result;
-use napi::Error;
+use napi::{Result, Error, JsObject, Env};
 
-use crate::llm::SambaNovaLLM;
+use crate::llm::{SambaNovaLLM, OpenAILLM, AnthropicLLM, GoogleGenAILLM, OllamaLLM};
 use crate::memory::ConversationBufferMemory;
 
 #[napi]
@@ -34,20 +34,40 @@ pub struct Chain {
     inner: Arc<Mutex<Option<CoreLLMChain>>>,
 }
 
+use napi::bindgen_prelude::Either;
+
 #[napi]
 impl Chain {
     #[napi(constructor)]
-    pub fn new(prompt: &PromptTemplate, llm: &SambaNovaLLM, memory: Option<&ConversationBufferMemory>) -> Self {
-        let mut chain = CoreLLMChain::new(prompt.inner.clone(), llm.inner.clone());
+    pub fn new(
+        prompt: &PromptTemplate, 
+        llm_input: Either<&SambaNovaLLM, Either<&OpenAILLM, Either<&AnthropicLLM, Either<&GoogleGenAILLM, &OllamaLLM>>>>, 
+        memory: Option<&ConversationBufferMemory>
+    ) -> Result<Self> {
+        let llm: Arc<dyn LLM> = match llm_input {
+            Either::A(samba) => samba.inner.clone(),
+            Either::B(rest) => match rest {
+                Either::A(openai) => openai.inner.clone(),
+                Either::B(rest2) => match rest2 {
+                    Either::A(claude) => claude.inner.clone(),
+                    Either::B(rest3) => match rest3 {
+                        Either::A(gemini) => gemini.inner.clone(),
+                        Either::B(ollama) => ollama.inner.clone(),
+                    },
+                },
+            },
+        };
+
+        let mut chain = CoreLLMChain::new(prompt.inner.clone(), llm);
         
         if let Some(mem) = memory {
             let core_mem = mem.inner.lock().unwrap().clone();
              chain = chain.with_memory(Arc::new(core_mem));
         }
 
-        Self {
+        Ok(Self {
             inner: Arc::new(Mutex::new(Some(chain))),
-        }
+        })
     }
 
     #[napi]
