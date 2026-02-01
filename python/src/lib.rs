@@ -175,11 +175,30 @@ impl Chain {
     }
 }
 
+use mini_langchain_core::token::TokenCounter;
+
+#[pyclass]
+struct TokenCalculator;
+
+#[pymethods]
+impl TokenCalculator {
+    #[staticmethod]
+    fn count(text: &str) -> usize {
+        TokenCounter::count(text)
+    }
+
+    #[staticmethod]
+    fn estimate_cost(text: &str, rate_per_1k: f64) -> f64 {
+        TokenCounter::estimate_cost(text, rate_per_1k)
+    }
+}
+
 #[pymodule]
 fn mini_langchain(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PromptTemplate>()?;
     m.add_class::<InMemoryCache>()?;
     m.add_class::<Chain>()?;
     m.add_class::<SambaNovaLLM>()?;
+    m.add_class::<TokenCalculator>()?;
     Ok(())
 }

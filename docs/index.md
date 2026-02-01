@@ -17,7 +17,7 @@ Mini LangChain is built with a **Rust Core** for speed and cost-efficiency (toke
 ## Quick Start
 
 ```bash
-pip install mini_langchain  # (Once published)
+pip install mini_langchain
 ```
 
 ```python

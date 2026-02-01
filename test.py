@@ -63,9 +63,11 @@ def main():
             model="Meta-Llama-3.1-8B-Instruct",
             system_prompt="You are a pirate.",
             temperature=0.7,
-            max_tokens=100
+            max_tokens=100,
+            top_k=50,
+            top_p=0.9
         ) 
-        print("SambaNovaLLM initialized successfully with customization.")
+        print("SambaNovaLLM initialized successfully with customization (inc. top_k).")
         
         # Optionally try to run if key exists
         if os.environ.get("SAMBANOVA_API_KEY"):
