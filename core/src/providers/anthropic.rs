@@ -89,3 +89,22 @@ impl LLM for AnthropicProvider {
             .ok_or_else(|| anyhow::anyhow!("No content returned from Anthropic"))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_anthropic_serialization() {
+        let request = AnthropicRequest {
+            model: "claude-3".to_string(),
+            messages: vec![Message { role: "user".to_string(), content: "hi".to_string() }],
+            system: Some("sys".to_string()),
+            max_tokens: Some(100),
+        };
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("\"model\":\"claude-3\""));
+        assert!(json.contains("\"system\":\"sys\""));
+        assert!(json.contains("\"max_tokens\":100"));
+    }
+}

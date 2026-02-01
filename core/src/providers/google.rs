@@ -128,3 +128,19 @@ impl LLM for GoogleGenAIProvider {
         Err(anyhow::anyhow!("No content returned from Google Gemini"))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_gemini_serialization() {
+        let parts = vec![Part { text: "hi".to_string() }];
+        let contents = vec![Content { parts, role: Some("user".to_string()) }];
+        let request = GeminiRequest { contents, generation_config: None };
+        
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("\"text\":\"hi\""));
+        assert!(json.contains("\"role\":\"user\""));
+    }
+}

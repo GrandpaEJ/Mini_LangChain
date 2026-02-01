@@ -104,3 +104,23 @@ impl LLM for OpenAIProvider {
             .ok_or_else(|| anyhow::anyhow!("No choices returned from OpenAI"))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_openai_serialization() {
+        let request = OpenAIRequest {
+            model: "gpt-4".to_string(),
+            messages: vec![Message { role: "user".to_string(), content: "hello".to_string() }],
+            temperature: Some(0.7),
+            max_tokens: None,
+        };
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("\"model\":\"gpt-4\""));
+        assert!(json.contains("\"role\":\"user\""));
+        assert!(json.contains("\"content\":\"hello\""));
+        assert!(json.contains("\"temperature\":0.7"));
+    }
+}
