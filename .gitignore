@@ -1,1 +1,48 @@
+# Project Specific
 plan.md
+.env
+
+# Rust
+/target
+**/*.rs.bk
+Cargo.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv
+venv/
+ENV/
+env/
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# JavaScript / Node
+node_modules/
+dist/
+build/
+.npm
+.yarn-integrity
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Go
+/bin/
+/pkg/
+/vendor/
+*.exe
+*.test
+*.prof
+
+# IDEs / System
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
