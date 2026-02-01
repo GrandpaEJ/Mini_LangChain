@@ -1,6 +1,11 @@
 [package]
-name = "core"
+name = "mini_langchain_core"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+async-trait = "0.1"
+anyhow = "1"
+thiserror = "2"
