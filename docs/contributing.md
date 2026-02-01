@@ -39,6 +39,20 @@ npm run build
 npm test
 ```
 
+## CI/CD & Releases
+
+### NPM (Node.js)
+To publish to NPM from GitHub Actions (non-interactively), you must use an **Automation Token**:
+1. Log in to [npmjs.com](https://www.npmjs.com/).
+2. Go to **Access Tokens** -> **Generate New Token**.
+3. Select **"Automation"** as the type. This is crucial as it bypasses 2FA challenges during `npm publish`.
+4. Copy the token and add it to your GitHub Repository Secrets as `NPM_SECRET_TOKEN`.
+
+### PyPI (Python)
+Automated releases to PyPI use a standard API Token:
+1. Generate an API token on [pypi.org](https://pypi.org/manage/account/).
+2. Add it to GitHub Secrets as `PYPI_API_TOKEN`.
+
 ## Creating a Pull Request
 1. Fork the repo.
 2. Create a feature branch.
