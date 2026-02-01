@@ -12,7 +12,7 @@ pub struct AgentExecutor {
 #[pymethods]
 impl AgentExecutor {
     #[new]
-    fn new(llm_model: PyObject, py: Python<'_>) -> PyResult<Self> {
+    fn new(llm_model: Py<PyAny>, py: Python<'_>) -> PyResult<Self> {
         // Must extract LLM just like in Chain
         let llm: Arc<dyn LLM> = if let Ok(samba) = llm_model.extract::<SambaNovaLLM>(py) {
              samba.inner.clone()
@@ -35,7 +35,7 @@ impl AgentExecutor {
 
     fn execute(&self, py: Python<'_>, input: String) -> PyResult<String> {
         let inner = self.inner.clone();
-        let result = py.allow_threads(move || {
+        let result = py.detach(move || {
             let rt = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
             rt.block_on(inner.execute(&input))
                .map_err(|e| e.to_string())

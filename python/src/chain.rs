@@ -36,7 +36,7 @@ pub struct Chain {
 impl Chain {
     #[new]
     #[pyo3(signature = (prompt, llm_model, memory=None))]
-    fn new(py: Python<'_>, prompt: &PromptTemplate, llm_model: PyObject, memory: Option<&ConversationBufferMemory>) -> PyResult<Self> {
+    fn new(py: Python<'_>, prompt: &PromptTemplate, llm_model: Py<PyAny>, memory: Option<&ConversationBufferMemory>) -> PyResult<Self> {
         // Try to extract known Rust LLMs
         let llm: Arc<dyn LLM> = if let Ok(samba) = llm_model.extract::<SambaNovaLLM>(py) {
              samba.inner.clone()
@@ -80,7 +80,7 @@ impl Chain {
     fn invoke(&self, py: Python<'_>, inputs: HashMap<String, String>) -> PyResult<String> {
         let inner_clone = self.inner.clone();
         
-        let result: Result<String, String> = py.allow_threads(move || {
+        let result: Result<String, String> = py.detach(move || {
             let rt = tokio::runtime::Builder::new_current_thread()
                 .enable_all()
                 .build()

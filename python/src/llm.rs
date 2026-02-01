@@ -10,17 +10,17 @@ use async_trait::async_trait;
 
 // --- Wrapper for Python LLMs ---
 pub struct PyLLMBridge {
-    pub(crate) py_obj: PyObject,
+    pub(crate) py_obj: Py<PyAny>,
 }
 
 #[async_trait]
 impl LLM for PyLLMBridge {
     async fn generate(&self, prompt: &str) -> anyhow::Result<String> {
         let prompt_string = prompt.to_string();
-        let py_obj = Python::with_gil(|py| self.py_obj.clone_ref(py));
+        let py_obj = Python::attach(|py| self.py_obj.clone_ref(py));
         
         let output = tokio::task::spawn_blocking(move || {
-            Python::with_gil(|py| {
+            Python::attach(|py| {
                 let obj = py_obj.bind(py);
                 let args = (prompt_string,);
                 let result = obj.call_method1("generate", args)?;
