@@ -11,11 +11,11 @@ repository = "https://github.com/GrandpaEJ/Mini_LangChain"
 crate-type = ["cdylib"]
 
 [dependencies]
-napi = { version = "2", features = ["async", "tokio_rt"] }
-napi-derive = "2"
+napi = { version = "3.8.2", features = ["async", "tokio_rt"] }
+napi-derive = "3.5.1"
 mini_langchain_core = { path = "../core" }
 tokio = { version = "1", features = ["full"] }
 anyhow = "1"
 
 [build-dependencies]
-napi-build = "2"
+napi-build = "1"

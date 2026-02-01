@@ -75,7 +75,7 @@ impl Chain {
         let inner_clone = self.inner.clone();
         
         let chain = {
-            let mut guard = inner_clone.lock().unwrap();
+            let guard = inner_clone.lock().unwrap();
             if let Some(chain) = guard.as_ref() {
                 chain.clone()
             } else {
