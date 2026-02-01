@@ -1,6 +1,6 @@
 use napi_derive::napi;
 use std::sync::Arc;
-use napi::{Result, Error, JsObject, Env};
+use napi::{Result, Error};
 use mini_langchain_core::agent::{AgentExecutor as CoreAgentExecutor};
 use mini_langchain_core::llm::LLM;
 use crate::llm::{SambaNovaLLM, OpenAILLM, AnthropicLLM, GoogleGenAILLM, OllamaLLM};

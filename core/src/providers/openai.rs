@@ -3,7 +3,6 @@ use async_trait::async_trait;
 use anyhow::{Result, Context};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use std::env;
 
 #[derive(Serialize)]
 struct OpenAIRequest {

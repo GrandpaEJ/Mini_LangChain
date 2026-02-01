@@ -1,6 +1,6 @@
 use pyo3::prelude::*;
 use std::sync::{Arc, Mutex};
-use mini_langchain_core::memory::{ConversationBufferMemory as CoreBufferMemory, Memory};
+use mini_langchain_core::memory::{ConversationBufferMemory as CoreBufferMemory};
 use mini_langchain_core::cache::InMemoryCache as CoreInMemoryCache;
 
 #[pyclass]

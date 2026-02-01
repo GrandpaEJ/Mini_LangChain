@@ -4,7 +4,7 @@ use mini_langchain_core::prompt::PromptTemplate as CorePromptTemplate;
 use mini_langchain_core::chain::LLMChain as CoreLLMChain;
 use mini_langchain_core::llm::LLM;
 use std::collections::HashMap;
-use napi::{Result, Error, JsObject, Env};
+use napi::{Result, Error};
 
 use crate::llm::{SambaNovaLLM, OpenAILLM, AnthropicLLM, GoogleGenAILLM, OllamaLLM};
 use crate::memory::ConversationBufferMemory;

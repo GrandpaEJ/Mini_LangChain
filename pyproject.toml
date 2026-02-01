@@ -1,0 +1,20 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "mini_langchain"
+version = "0.1.0"
+description = "A lightweight Rust-based LangChain implementation"
+authors = [{name = "GrandpaEJ", email = "grandpa@example.com"}]
+classifier = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = []
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+module-name = "mini_langchain"
+manifest-path = "python/Cargo.toml"
