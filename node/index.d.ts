@@ -7,11 +7,22 @@ export declare class PromptTemplate {
   constructor(template: string, variables: Array<string>)
   format(values: Record<string, string>): string
 }
+export declare class ConversationBufferMemory {
+  constructor()
+}
 export type SambaNovaLLM = SambaNovaLlm
 export declare class SambaNovaLlm {
   constructor(model: string, apiKey?: string | undefined | null, systemPrompt?: string | undefined | null, temperature?: number | undefined | null, maxTokens?: number | undefined | null, topK?: number | undefined | null, topP?: number | undefined | null)
 }
+export declare class Document {
+  get pageContent(): string
+  get metadata(): Record<string, string>
+}
+export declare class TextLoader {
+  constructor(filePath: string)
+  load(): Array<Document>
+}
 export declare class Chain {
-  constructor(prompt: PromptTemplate, llm: SambaNovaLlm)
+  constructor(prompt: PromptTemplate, llm: SambaNovaLlm, memory?: ConversationBufferMemory | undefined | null)
   invoke(inputs: Record<string, string>): Promise<string>
 }

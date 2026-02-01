@@ -70,6 +70,66 @@ impl InMemoryCache {
     }
 }
 
+use mini_langchain_core::memory::{ConversationBufferMemory as CoreBufferMemory, Memory};
+
+#[pyclass]
+struct ConversationBufferMemory {
+    inner: Arc<Mutex<CoreBufferMemory>>, // Wrapper for Python safety
+}
+
+#[pymethods]
+impl ConversationBufferMemory {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: Arc::new(Mutex::new(CoreBufferMemory::new())),
+        }
+    }
+}
+
+use mini_langchain_core::loader::{Loader, TextLoader as CoreTextLoader};
+use mini_langchain_core::schema::Document as CoreDocument;
+
+#[pyclass]
+struct Document {
+    inner: CoreDocument,
+}
+
+#[pymethods]
+impl Document {
+    #[getter]
+    fn page_content(&self) -> String {
+        self.inner.page_content.clone()
+    }
+    
+    #[getter]
+    fn metadata(&self) -> HashMap<String, String> {
+        self.inner.metadata.clone()
+    }
+}
+
+#[pyclass]
+struct TextLoader {
+    inner: CoreTextLoader,
+}
+
+#[pymethods]
+impl TextLoader {
+    #[new]
+    fn new(file_path: String) -> Self {
+        Self {
+            inner: CoreTextLoader::new(file_path),
+        }
+    }
+
+    fn load(&self) -> PyResult<Vec<Document>> {
+        let docs = self.inner.load()
+            .map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?;
+            
+        Ok(docs.into_iter().map(|d| Document { inner: d }).collect())
+    }
+}
+
 #[pyclass]
 struct Chain {
     inner: Arc<Mutex<Option<CoreLLMChain>>>,
@@ -123,7 +183,8 @@ impl SambaNovaLLM {
 #[pymethods]
 impl Chain {
     #[new]
-    fn new(py: Python<'_>, prompt: &PromptTemplate, llm_model: PyObject) -> PyResult<Self> {
+    #[pyo3(signature = (prompt, llm_model, memory=None))]
+    fn new(py: Python<'_>, prompt: &PromptTemplate, llm_model: PyObject, memory: Option<&ConversationBufferMemory>) -> PyResult<Self> {
         // Try to extract SambaNovaLLM
         let llm: Arc<dyn LLM> = if let Ok(samba) = llm_model.extract::<SambaNovaLLM>(py) {
              samba.inner.clone()
@@ -132,8 +193,13 @@ impl Chain {
              Arc::new(PyLLMBridge { py_obj: llm_model })
         };
         
-        let chain = CoreLLMChain::new(prompt.inner.clone(), llm);
+        let mut chain = CoreLLMChain::new(prompt.inner.clone(), llm);
         
+        if let Some(mem) = memory {
+             let core_mem = mem.inner.lock().unwrap().clone();
+             chain = chain.with_memory(Arc::new(core_mem));
+        }
+
         Ok(Self {
             inner: Arc::new(Mutex::new(Some(chain))),
         })
@@ -199,6 +265,9 @@ fn mini_langchain(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<InMemoryCache>()?;
     m.add_class::<Chain>()?;
     m.add_class::<SambaNovaLLM>()?;
+    m.add_class::<ConversationBufferMemory>()?;
+    m.add_class::<Document>()?;
+    m.add_class::<TextLoader>()?;
     m.add_class::<TokenCalculator>()?;
     Ok(())
 }

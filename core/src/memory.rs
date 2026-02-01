@@ -17,6 +17,7 @@ pub trait Memory: Send + Sync {
 }
 
 /// Simple buffer memory that stores chat history.
+#[derive(Clone)]
 pub struct ConversationBufferMemory {
     history: Arc<Mutex<Vec<String>>>,
     memory_key: String, // Key to inject into prompt (default: "history")
@@ -52,10 +53,14 @@ impl Memory for ConversationBufferMemory {
     }
 
     async fn save_context(&self, inputs: &HashMap<String, String>, outputs: &HashMap<String, String>) -> Result<()> {
-        // Simple heuristic: Take the first value from inputs as "Human" and first from outputs as "AI"
-        // In a real system, we might want specific keys.
-        let input_val = inputs.values().next().map(|s| s.as_str()).unwrap_or("");
-        let output_val = outputs.values().next().map(|s| s.as_str()).unwrap_or("");
+        // Try specific keys first, fall back to "input" or arbitrary first value
+        let input_val = inputs.get("input").map(|s| s.as_str())
+            .or_else(|| inputs.values().next().map(|s| s.as_str()))
+            .unwrap_or("");
+            
+        let output_val = outputs.get("output").map(|s| s.as_str())
+            .or_else(|| outputs.values().next().map(|s| s.as_str()))
+            .unwrap_or("");
 
         let entry = format!("{}: {}\n{}: {}", self.human_prefix, input_val, self.ai_prefix, output_val);
         
