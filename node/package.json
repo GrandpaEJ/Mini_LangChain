@@ -42,7 +42,7 @@
     "scripts": {
         "build": "napi build --platform --release",
         "build:debug": "napi build --platform",
-        "prepublishOnly": "npx -y @napi-rs/cli prepublish -t npm",
+        "prepublishOnly": "npx -y --package @napi-rs/cli napi prepublish -t npm",
         "test": "node ../tests/node/test.js",
         "test:bun": "bun ../tests/node/test.js",
         "test:ts": "tsc --noEmit --target es2020 --moduleResolution node ../tests/node/test.ts"
