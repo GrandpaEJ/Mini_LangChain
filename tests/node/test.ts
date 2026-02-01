@@ -1,4 +1,4 @@
-import { PromptTemplate, Chain, SambaNovaLlm } from './index';
+import { PromptTemplate, Chain, SambaNovaLlm } from '../../node/index';
 
 // Simple Type Check Test
 // This file is used to verify that index.d.ts is correctly picked up by tsc
