@@ -23,6 +23,18 @@
         "type": "git",
         "url": "https://github.com/GrandpaEJ/Mini_LangChain"
     },
+    "napi": {
+        "name": "mini-langchain",
+        "triples": {
+            "defaults": true,
+            "additional": [
+                "x86_64-unknown-linux-musl",
+                "aarch64-unknown-linux-gnu",
+                "i686-pc-windows-msvc",
+                "aarch64-pc-windows-msvc"
+            ]
+        }
+    },
     "files": [
         "index.js",
         "index.d.ts",
