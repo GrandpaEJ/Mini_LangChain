@@ -16,3 +16,6 @@ napi-derive = "2"
 mini_langchain_core = { path = "../core" }
 tokio = { version = "1", features = ["full"] }
 anyhow = "1"
+
+[build-dependencies]
+napi-build = "2"
