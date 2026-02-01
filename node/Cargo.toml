@@ -1,0 +1,14 @@
+[package]
+name = "mini_langchain_node"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "2", features = ["async", "tokio_rt"] }
+napi-derive = "2"
+mini_langchain_core = { path = "../core" }
+tokio = { version = "1", features = ["full"] }
+anyhow = "1"

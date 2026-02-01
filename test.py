@@ -4,9 +4,21 @@ import os
 # Ensure we can import the module if it's in the current dir
 sys.path.append(os.getcwd())
 
+# Load .env manually for testing
+if os.path.exists(".env"):
+    with open(".env", "r") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                key, value = line.split("=", 1)
+                os.environ[key.strip()] = value.strip()
+                # Fix typo if present
+                if key.strip() == "SAMBANOVA_API_KAY":
+                    os.environ["SAMBANOVA_API_KEY"] = value.strip()
+
 try:
     import mini_langchain
-    from mini_langchain import PromptTemplate, Chain, InMemoryCache, SambaNovaLLM
+    from mini_langchain import PromptTemplate, Chain, InMemoryCache, SambaNovaLLM, TokenCalculator
 except ImportError:
     print("Could not import mini_langchain. Make sure the .so file is present.")
     sys.exit(1)
@@ -80,6 +92,20 @@ def main():
             
     except Exception as e:
         print(f"SambaNova Init Failed (expected if no key/env): {e}")
+
+    # 7. Test Token Calculator
+    print("\n--- Testing Token Calculator ---")
+    text = "Hello world, this is a test."
+    tokens = TokenCalculator.count(text)
+    cost = TokenCalculator.estimate_cost(text, 0.002) # $0.002 per 1k tokens
+    print(f"Text: '{text}'")
+    print(f"Tokens: {tokens}")
+    print(f"Est. Cost ($0.002/1k): ${cost:.6f}")
+    
+    if tokens > 0:
+        print("SUCCESS: Token counting works.")
+    else:
+        print("FAIL: Token count is 0.")
 
 if __name__ == "__main__":
     main()
