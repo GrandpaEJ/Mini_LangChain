@@ -3,12 +3,14 @@ use anyhow::Result;
 use crate::llm::LLM;
 use crate::prompt::PromptTemplate;
 use crate::cache::Cache;
+use crate::memory::Memory;
 use std::sync::Arc;
 
 pub struct LLMChain {
     prompt: PromptTemplate,
     llm: Arc<dyn LLM>,
     cache: Option<Arc<dyn Cache>>,
+    memory: Option<Arc<dyn Memory>>,
 }
 
 impl LLMChain {
@@ -17,6 +19,7 @@ impl LLMChain {
             prompt,
             llm,
             cache: None, // Default no cache
+            memory: None, // Default no memory
         }
     }
 
@@ -25,7 +28,18 @@ impl LLMChain {
         self
     }
 
-    pub async fn call(&self, inputs: HashMap<String, String>) -> Result<String> {
+    pub fn with_memory(mut self, memory: Arc<dyn Memory>) -> Self {
+        self.memory = Some(memory);
+        self
+    }
+
+    pub async fn call(&self, mut inputs: HashMap<String, String>) -> Result<String> {
+        // 0. Load Memory
+        if let Some(memory) = &self.memory {
+            let mem_vars = memory.load_memory_variables(&inputs).await?;
+            inputs.extend(mem_vars);
+        }
+
         // 1. Format Prompt
         let formatted = self.prompt.format(&inputs)?;
         
@@ -47,6 +61,19 @@ impl LLMChain {
         // 5. Store in Cache
         if let Some(cache) = &self.cache {
             cache.set(&minified, &result).await;
+        }
+
+        // 5. Store in Cache
+        if let Some(cache) = &self.cache {
+            cache.set(&minified, &result).await;
+        }
+
+        // 6. Save Context to Memory
+        if let Some(memory) = &self.memory {
+            // Need output variables
+            let mut outputs = HashMap::new();
+            outputs.insert("output".to_string(), result.clone());
+            memory.save_context(&inputs, &outputs).await?;
         }
 
         Ok(result)
