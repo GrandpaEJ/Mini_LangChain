@@ -5,13 +5,27 @@ build-backend = "maturin"
 [project]
 name = "mini_langchain"
 version = "0.1.0"
-description = "A lightweight Rust-based LangChain implementation"
-authors = [{name = "GrandpaEJ", email = "grandpa@example.com"}]
+description = "High-performance, cross-language LLM orchestration library with Rust core."
+authors = [{name = "GrandpaEJ"}]
+readme = "README.md"
+license = {text = "MIT"}
 classifier = [
     "Programming Language :: Rust",
-    "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
 ]
+
+[project.urls]
+Homepage = "https://grandpaej.github.io/Mini_LangChain/"
+Repository = "https://github.com/GrandpaEJ/Mini_LangChain.git"
+Documentation = "https://grandpaej.github.io/Mini_LangChain/"
+Changelog = "https://grandpaej.github.io/Mini_LangChain/changelog/"
 dependencies = []
 
 [tool.maturin]
