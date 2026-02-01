@@ -51,6 +51,37 @@ npm install mini-langchain-node
 ### 1. RAG & Vector Search 🔍
 *Embed documents and search by semantic similarity.*
 
+**Rust Core 🦀**
+```rust
+use mini_langchain_core::{
+    vectorstore::{VectorStore, InMemoryVectorStore},
+    embedding::MockEmbeddings,
+    schema::Document
+};
+use std::sync::Arc;
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    // 1. Initialize
+    let store = InMemoryVectorStore::new(Arc::new(MockEmbeddings));
+
+    // 2. Add Documents
+    let docs = vec![
+        Document::new("Rust is memory safe 🦀".to_string())
+            .with_metadata("tag", "tech"),
+        Document::new("Node.js is async 💚".to_string())
+            .with_metadata("tag", "tech"),
+    ];
+    store.add_documents(&docs).await?;
+
+    // 3. Search
+    let results = store.similarity_search("memory", 1).await?;
+    println!("{}", results[0].page_content); // "Rust is memory safe 🦀"
+    
+    Ok(())
+}
+```
+
 **Python**
 ```python
 from mini_langchain import InMemoryVectorStore, MockEmbeddings, Document
