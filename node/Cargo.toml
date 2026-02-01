@@ -8,6 +8,7 @@ license = "MIT"
 repository = "https://github.com/GrandpaEJ/Mini_LangChain"
 
 [lib]
+name = "mini_langchain_node"
 crate-type = ["cdylib"]
 
 [dependencies]
@@ -18,4 +19,4 @@ tokio = { version = "1", features = ["full"] }
 anyhow = "1"
 
 [build-dependencies]
-napi-build = "1"
+napi-build = "2"

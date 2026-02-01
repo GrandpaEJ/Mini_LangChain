@@ -24,16 +24,15 @@
         "url": "https://github.com/GrandpaEJ/Mini_LangChain"
     },
     "napi": {
-        "name": "mini-langchain",
-        "triples": {
-            "defaults": true,
-            "additional": [
-                "x86_64-unknown-linux-musl",
-                "aarch64-unknown-linux-gnu",
-                "i686-pc-windows-msvc",
-                "aarch64-pc-windows-msvc"
-            ]
-        }
+        "binaryName": "mini-langchain",
+        "targets": [
+            "x86_64-unknown-linux-musl",
+            "aarch64-unknown-linux-gnu",
+            "i686-pc-windows-msvc",
+            "x86_64-pc-windows-msvc",
+            "x86_64-apple-darwin",
+            "aarch64-apple-darwin"
+        ]
     },
     "files": [
         "index.js",
@@ -49,7 +48,7 @@
         "test:ts": "tsc --noEmit --target es2020 --moduleResolution node ../tests/node/test.ts"
     },
     "devDependencies": {
-        "@napi-rs/cli": "^2.18.0",
+        "@napi-rs/cli": "^3.5.1",
         "typescript": "^5.0.0",
         "@types/node": "^20.0.0"
     },

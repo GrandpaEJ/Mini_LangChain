@@ -52,3 +52,4 @@ bun.lockb
 *.swo
 .DS_Store
 Thumbs.db
+ai_agent_process_bn.md

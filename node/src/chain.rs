@@ -6,7 +6,11 @@ use mini_langchain_core::llm::LLM;
 use std::collections::HashMap;
 use napi::{Result, Error};
 
-use crate::llm::{SambaNovaLLM, OpenAILLM, AnthropicLLM, GoogleGenAILLM, OllamaLLM};
+use crate::providers::SambaNovaLLM;
+use crate::providers::OpenAILLM;
+use crate::providers::AnthropicLLM;
+use crate::providers::GoogleGenAILLM;
+use crate::providers::OllamaLLM;
 use crate::memory::ConversationBufferMemory;
 
 #[napi]
