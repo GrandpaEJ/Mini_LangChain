@@ -9,3 +9,4 @@ pub mod schema;
 pub mod loader;
 pub mod embedding;
 pub mod vectorstore;
+pub mod agent;
