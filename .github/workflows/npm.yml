@@ -63,6 +63,9 @@ jobs:
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
+      - name: Install dependencies
+        working-directory: node
+        run: npm install --ignore-scripts
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
@@ -70,7 +73,11 @@ jobs:
       - name: Move artifacts
         working-directory: node
         run: |
-          mv artifacts/bindings-*/*.node .
+          mkdir -p npm
+          mv artifacts/bindings-x86_64-unknown-linux-gnu/*.node . || true
+          mv artifacts/bindings-x86_64-pc-windows-msvc/*.node . || true
+          mv artifacts/bindings-x86_64-apple-darwin/*.node . || true
+          mv artifacts/bindings-aarch64-apple-darwin/*.node . || true
           ls -R
       - name: Publish
         working-directory: node

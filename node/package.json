@@ -1,5 +1,5 @@
 {
-    "name": "mini-langchain-node",
+    "name": "mini-langchain",
     "version": "0.1.0",
     "main": "index.js",
     "types": "index.d.ts",
@@ -26,9 +26,7 @@
     "napi": {
         "binaryName": "mini-langchain",
         "targets": [
-            "x86_64-unknown-linux-musl",
-            "aarch64-unknown-linux-gnu",
-            "i686-pc-windows-msvc",
+            "x86_64-unknown-linux-gnu",
             "x86_64-pc-windows-msvc",
             "x86_64-apple-darwin",
             "aarch64-apple-darwin"
@@ -42,7 +40,7 @@
     "scripts": {
         "build": "napi build --platform --release",
         "build:debug": "napi build --platform",
-        "prepublishOnly": "npx -y --package @napi-rs/cli napi prepublish -t npm",
+        "prepublishOnly": "napi prepublish -t npm",
         "test": "node ../tests/node/test.js",
         "test:bun": "bun ../tests/node/test.js",
         "test:ts": "tsc --noEmit --target es2020 --moduleResolution node ../tests/node/test.ts"
