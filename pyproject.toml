@@ -3,7 +3,7 @@ requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "mini_langchain"
+name = "mini-langchain"
 version = "0.1.0"
 description = "High-performance, cross-language LLM orchestration library with Rust core."
 authors = [{name = "GrandpaEJ"}]

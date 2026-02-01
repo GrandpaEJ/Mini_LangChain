@@ -36,7 +36,7 @@ Standard frameworks are bloated. **Mini LangChain** is stripped down to the bare
 
 ### Python 🐍
 ```bash
-pip install mini_langchain
+pip install mini-langchain
 ```
 
 ### Node.js 💚
