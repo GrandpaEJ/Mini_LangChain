@@ -18,12 +18,25 @@
     "scripts": {
         "build": "napi build --platform --release",
         "build:debug": "napi build --platform",
-        "prepublishOnly": "napi prepublish -t npm"
+        "prepublishOnly": "napi prepublish -t npm",
+        "test": "node test.js",
+        "test:bun": "bun test.js",
+        "test:ts": "tsc --noEmit --target es2020 --moduleResolution node test.ts"
     },
     "devDependencies": {
-        "@napi-rs/cli": "^2.18.0"
+        "@napi-rs/cli": "^2.18.0",
+        "typescript": "^5.0.0",
+        "@types/node": "^20.0.0"
     },
     "engines": {
         "node": ">= 10"
+    },
+    "exports": {
+        ".": {
+            "types": "./index.d.ts",
+            "require": "./index.js",
+            "import": "./index.js",
+            "default": "./index.js"
+        }
     }
 }
