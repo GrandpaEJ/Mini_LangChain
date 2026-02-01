@@ -19,9 +19,9 @@
         "build": "napi build --platform --release",
         "build:debug": "napi build --platform",
         "prepublishOnly": "napi prepublish -t npm",
-        "test": "node test.js",
-        "test:bun": "bun test.js",
-        "test:ts": "tsc --noEmit --target es2020 --moduleResolution node test.ts"
+        "test": "node ../tests/node/test.js",
+        "test:bun": "bun ../tests/node/test.js",
+        "test:ts": "tsc --noEmit --target es2020 --moduleResolution node ../tests/node/test.ts"
     },
     "devDependencies": {
         "@napi-rs/cli": "^2.18.0",

@@ -2,6 +2,10 @@
 name = "mini_langchain_node"
 version = "0.1.0"
 edition = "2021"
+authors = ["GrandpaEJ <grandpaej@example.com>"]
+description = "Node.js bindings for Mini_LangChain"
+license = "MIT"
+repository = "https://github.com/GrandpaEJ/Mini_LangChain"
 
 [lib]
 crate-type = ["cdylib"]

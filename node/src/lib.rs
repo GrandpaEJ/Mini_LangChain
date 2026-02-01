@@ -5,7 +5,6 @@ use std::sync::Arc;
 use mini_langchain_core::prompt::PromptTemplate as CorePromptTemplate;
 use mini_langchain_core::chain::LLMChain as CoreLLMChain;
 use mini_langchain_core::providers::sambanova::SambaNovaProvider;
-use mini_langchain_core::llm::LLM;
 use tokio::sync::Mutex;
 
 #[napi]

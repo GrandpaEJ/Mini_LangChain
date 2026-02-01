@@ -1,5 +1,4 @@
 use tiktoken_rs::cl100k_base;
-use anyhow::Result;
 
 pub struct TokenCounter;
 
