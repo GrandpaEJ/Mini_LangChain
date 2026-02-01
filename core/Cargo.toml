@@ -6,6 +6,10 @@ authors = ["GrandpaEJ"]
 description = "A low-cost, cross-language LangChain implementation"
 license = "MIT"
 repository = "https://github.com/GrandpaEJ/Mini_LangChain"
+readme = "../README.md"
+keywords = ["llm", "langchain", "ai", "agent", "rag"]
+categories = ["science::robotics", "api-bindings", "asynchronous"]
+documentation = "https://docs.rs/mini_langchain_core"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
