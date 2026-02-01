@@ -6,6 +6,7 @@ use crate::cache::Cache;
 use crate::memory::Memory;
 use std::sync::Arc;
 
+#[derive(Clone)]
 pub struct LLMChain {
     prompt: PromptTemplate,
     llm: Arc<dyn LLM>,

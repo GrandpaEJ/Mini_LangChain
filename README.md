@@ -20,7 +20,7 @@ Standard frameworks are bloated. **Mini LangChain** is stripped down to the bare
 
 ---
 
-## ⚡ Features (Real & Ready)
+## ⚡ Features (Ready)
 
 | Module | Status | Description |
 | :--- | :---: | :--- |
@@ -107,7 +107,7 @@ print(chain.invoke({"input": "My name is User."})) # Memory remembers!
 ---
 
 ## 🗺️ Roadmap
-- [ ] **Real Embeddings**: Integration with SambaNova/OpenAI embeddings.
+- [ ] **Embeddings**: Integration with SambaNova/OpenAI embeddings.
 - [ ] **Persistent Storage**: SQLite/PGVector support.
 - [ ] **Tools**: Search & Calculator implementations.
 
