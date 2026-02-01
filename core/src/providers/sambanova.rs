@@ -8,18 +8,30 @@ pub struct SambaNovaProvider {
     api_key: String,
     model: String,
     client: reqwest::Client,
+    pub system_prompt: String,
+    pub temperature: Option<f64>,
+    pub max_tokens: Option<u32>,
 }
 
 impl SambaNovaProvider {
-    pub fn new(api_key: Option<String>, model: String) -> Self {
+    pub fn new(
+        api_key: Option<String>, 
+        model: String,
+        system_prompt: Option<String>,
+        temperature: Option<f64>,
+        max_tokens: Option<u32>
+    ) -> Result<Self> {
         let key = api_key.or_else(|| env::var("SAMBANOVA_API_KEY").ok())
-            .expect("SambaNova API Key must be provided or set in SAMBANOVA_API_KEY env var");
+            .ok_or_else(|| anyhow!("SambaNova API Key must be provided or set in SAMBANOVA_API_KEY env var"))?;
             
-        Self {
+        Ok(Self {
             api_key: key,
             model,
             client: reqwest::Client::new(),
-        }
+            system_prompt: system_prompt.unwrap_or_else(|| "You are a helpful assistant.".to_string()),
+            temperature,
+            max_tokens,
+        })
     }
 }
 
@@ -28,13 +40,13 @@ impl LLM for SambaNovaProvider {
     async fn generate(&self, prompt: &str) -> Result<String> {
         let url = "https://api.sambanova.ai/v1/chat/completions";
         
-        let body = json!({
+        let mut body = json!({
             "stream": false,
             "model": self.model,
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a helpful assistant." 
+                    "content": self.system_prompt
                 },
                 {
                     "role": "user",
@@ -42,6 +54,13 @@ impl LLM for SambaNovaProvider {
                 }
             ]
         });
+
+        if let Some(temp) = self.temperature {
+            body.as_object_mut().unwrap().insert("temperature".to_string(), json!(temp));
+        }
+        if let Some(max_t) = self.max_tokens {
+            body.as_object_mut().unwrap().insert("max_tokens".to_string(), json!(max_t));
+        }
 
         let resp = self.client.post(url)
             .header("Authorization", format!("Bearer {}", self.api_key))

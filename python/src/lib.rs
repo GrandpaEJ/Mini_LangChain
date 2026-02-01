@@ -80,6 +80,7 @@ use mini_langchain_core::providers::sambanova::SambaNovaProvider;
 // ... (Existing Imports)
 
 #[pyclass]
+#[derive(Clone)]
 struct SambaNovaLLM {
     inner: Arc<SambaNovaProvider>,
 }
@@ -87,11 +88,20 @@ struct SambaNovaLLM {
 #[pymethods]
 impl SambaNovaLLM {
     #[new]
-    #[pyo3(signature = (model, api_key=None))]
-    fn new(model: String, api_key: Option<String>) -> Self {
-        Self {
-            inner: Arc::new(SambaNovaProvider::new(api_key, model)),
-        }
+    #[pyo3(signature = (model, api_key=None, system_prompt=None, temperature=None, max_tokens=None))]
+    fn new(
+        model: String, 
+        api_key: Option<String>,
+        system_prompt: Option<String>,
+        temperature: Option<f64>,
+        max_tokens: Option<u32>
+    ) -> PyResult<Self> {
+        let provider = SambaNovaProvider::new(api_key, model, system_prompt, temperature, max_tokens)
+            .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
+            
+        Ok(Self {
+            inner: Arc::new(provider),
+        })
     }
 }
 
@@ -168,5 +178,6 @@ fn mini_langchain(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PromptTemplate>()?;
     m.add_class::<InMemoryCache>()?;
     m.add_class::<Chain>()?;
+    m.add_class::<SambaNovaLLM>()?;
     Ok(())
 }

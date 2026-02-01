@@ -6,7 +6,7 @@ sys.path.append(os.getcwd())
 
 try:
     import mini_langchain
-    from mini_langchain import PromptTemplate, Chain, InMemoryCache
+    from mini_langchain import PromptTemplate, Chain, InMemoryCache, SambaNovaLLM
 except ImportError:
     print("Could not import mini_langchain. Make sure the .so file is present.")
     sys.exit(1)
@@ -53,6 +53,26 @@ def main():
          print("SUCCESS: LLM was skipped on second run (implied).")
          # Actually, I can't easily capture stdout here to verify, 
          # but I can visually check the output.
+
+    # 6. Test SambaNova (if env var set)
+    # We won't block on this failing if no key, just try to init.
+    print("\n--- Testing SambaNova Provider ---")
+    try:
+        # Default cheap model
+        samba = SambaNovaLLM(model="Meta-Llama-3.1-8B-Instruct") 
+        print("SambaNovaLLM initialized successfully.")
+        
+        # Optionally try to run if key exists
+        if os.environ.get("SAMBANOVA_API_KEY"):
+            print("SAMBANOVA_API_KEY found. Attempting real call...")
+            chain_samba = Chain(tmpl, samba)
+            res_samba = chain_samba.invoke({"name": "Bob"})
+            print(f"SambaNova Result: {res_samba}")
+        else:
+            print("Skipping real call (SAMBANOVA_API_KEY not set).")
+            
+    except Exception as e:
+        print(f"SambaNova Init Failed (expected if no key/env): {e}")
 
 if __name__ == "__main__":
     main()
