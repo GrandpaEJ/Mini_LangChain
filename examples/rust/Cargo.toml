@@ -1,0 +1,19 @@
+[package]
+name = "mini-langchain-examples"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+anyhow = "1.0"
+mini_langchain_core = { path = "../../core" }
+
+[[bin]]
+name = "basic_chat"
+path = "src/bin/basic_chat.rs"
+
+[[bin]]
+name = "rag_demo"
+path = "src/bin/rag_demo.rs"
