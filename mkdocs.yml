@@ -22,6 +22,8 @@ nav:
     - Getting Started: python/getting_started.md
     - API Reference: python/api.md
     - Examples: python/examples.md
+  - Node.js SDK:
+    - Getting Started: node/getting_started.md
   - Rust Core:
     - Architecture: rust/architecture.md
     - API Reference: rust/api.md

@@ -11,7 +11,3 @@
 | **Token Savings** | ~15% | Avg savings via whitespace minification |
 | **Cache Lookup** | < 0.1ms | In-Memory Hash Map |
 
-## Roadmap
-
-- [ ] Compare `SambaNovaLLM` (Rust) vs `langchain.llms.SambaNova` (Python) latency.
-- [ ] Measure memory footprint reduction.
