@@ -15,12 +15,26 @@ export declare class SambaNovaLlm {
   constructor(model: string, apiKey?: string | undefined | null, systemPrompt?: string | undefined | null, temperature?: number | undefined | null, maxTokens?: number | undefined | null, topK?: number | undefined | null, topP?: number | undefined | null)
 }
 export declare class Document {
+  constructor(pageContent: string, metadata?: Record<string, string> | undefined | null)
   get pageContent(): string
   get metadata(): Record<string, string>
 }
 export declare class TextLoader {
   constructor(filePath: string)
   load(): Array<Document>
+}
+export declare class MockEmbeddings {
+  constructor()
+  embedQuery(text: string): Promise<Array<number>>
+}
+export declare class InMemoryVectorStore {
+  constructor(embeddings: MockEmbeddings)
+  addDocuments(docs: Array<Document>): Promise<Array<string>>
+  similaritySearch(query: string, k: number): Promise<Array<Document>>
+}
+export declare class AgentExecutor {
+  constructor(llm: SambaNovaLlm)
+  execute(input: string): Promise<string>
 }
 export declare class Chain {
   constructor(prompt: PromptTemplate, llm: SambaNovaLlm, memory?: ConversationBufferMemory | undefined | null)

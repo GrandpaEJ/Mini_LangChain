@@ -97,6 +97,16 @@ struct Document {
 
 #[pymethods]
 impl Document {
+    #[new]
+    #[pyo3(signature = (page_content, metadata=None))]
+    fn new(page_content: String, metadata: Option<HashMap<String, String>>) -> Self {
+        let mut doc = CoreDocument::new(page_content);
+        if let Some(meta) = metadata {
+            doc.metadata = meta;
+        }
+        Self { inner: doc }
+    }
+
     #[getter]
     fn page_content(&self) -> String {
         self.inner.page_content.clone()
@@ -127,6 +137,96 @@ impl TextLoader {
             .map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?;
             
         Ok(docs.into_iter().map(|d| Document { inner: d }).collect())
+    }
+}
+
+use mini_langchain_core::embedding::{Embeddings, MockEmbeddings as CoreMockEmbeddings};
+use mini_langchain_core::vectorstore::{VectorStore, InMemoryVectorStore as CoreInMemoryVectorStore};
+
+#[pyclass]
+struct MockEmbeddings {
+    inner: Arc<CoreMockEmbeddings>,
+}
+
+#[pymethods]
+impl MockEmbeddings {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: Arc::new(CoreMockEmbeddings),
+        }
+    }
+
+    fn embed_query(&self, text: &str) -> PyResult<Vec<f32>> {
+        let rt = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+        rt.block_on(self.inner.embed_query(text))
+           .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))
+    }
+}
+
+#[pyclass]
+struct InMemoryVectorStore {
+    inner: Arc<CoreInMemoryVectorStore>,
+}
+
+#[pymethods]
+impl InMemoryVectorStore {
+    #[new]
+    fn new(embeddings: &MockEmbeddings) -> Self {
+        Self {
+            inner: Arc::new(CoreInMemoryVectorStore::new(embeddings.inner.clone())),
+        }
+    }
+
+    fn add_documents(&self, docs: Vec<PyRef<Document>>) -> PyResult<Vec<String>> {
+         let rt = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+         let core_docs: Vec<CoreDocument> = docs.iter().map(|d| d.inner.clone()).collect();
+         
+         rt.block_on(self.inner.add_documents(&core_docs))
+            .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))
+    }
+
+    fn similarity_search(&self, query: String, k: usize) -> PyResult<Vec<Document>> {
+         let rt = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+         let results = rt.block_on(self.inner.similarity_search(&query, k))
+            .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
+            
+         Ok(results.into_iter().map(|d| Document { inner: d }).collect())
+    }
+}
+
+use mini_langchain_core::agent::{AgentExecutor as CoreAgentExecutor};
+
+#[pyclass]
+struct AgentExecutor {
+    inner: Arc<CoreAgentExecutor>,
+}
+
+#[pymethods]
+impl AgentExecutor {
+    #[new]
+    fn new(llm_model: PyObject, py: Python<'_>) -> PyResult<Self> {
+        // Must extract LLM just like in Chain
+        let llm: Arc<dyn LLM> = if let Ok(samba) = llm_model.extract::<SambaNovaLLM>(py) {
+             samba.inner.clone()
+        } else {
+             Arc::new(PyLLMBridge { py_obj: llm_model })
+        };
+        
+        Ok(Self {
+            inner: Arc::new(CoreAgentExecutor::new(llm)),
+        })
+    }
+
+    fn execute(&self, py: Python<'_>, input: String) -> PyResult<String> {
+        let inner = self.inner.clone();
+        let result = py.allow_threads(move || {
+            let rt = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+            rt.block_on(inner.execute(&input))
+               .map_err(|e| e.to_string())
+        });
+        
+        result.map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
     }
 }
 
@@ -268,6 +368,9 @@ fn mini_langchain(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<ConversationBufferMemory>()?;
     m.add_class::<Document>()?;
     m.add_class::<TextLoader>()?;
+    m.add_class::<MockEmbeddings>()?;
+    m.add_class::<InMemoryVectorStore>()?;
+    m.add_class::<AgentExecutor>()?;
     m.add_class::<TokenCalculator>()?;
     Ok(())
 }

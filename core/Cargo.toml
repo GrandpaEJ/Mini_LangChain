@@ -2,7 +2,7 @@
 name = "mini_langchain_core"
 version = "0.1.0"
 edition = "2021"
-authors = ["GrandpaEJ <grandpaej@example.com>"]
+authors = ["GrandpaEJ"]
 description = "A low-cost, cross-language LangChain implementation"
 license = "MIT"
 repository = "https://github.com/GrandpaEJ/Mini_LangChain"

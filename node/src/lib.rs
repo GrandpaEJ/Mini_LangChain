@@ -86,6 +86,15 @@ pub struct Document {
 
 #[napi]
 impl Document {
+    #[napi(constructor)]
+    pub fn new(page_content: String, metadata: Option<HashMap<String, String>>) -> Self {
+        let mut doc = CoreDocument::new(page_content);
+        if let Some(meta) = metadata {
+            doc.metadata = meta;
+        }
+        Self { inner: doc }
+    }
+
     #[napi(getter)]
     pub fn page_content(&self) -> String {
         self.inner.page_content.clone()
@@ -117,6 +126,86 @@ impl TextLoader {
             .map_err(|e| Error::from_reason(e.to_string()))?;
             
         Ok(docs.into_iter().map(|d| Document { inner: d }).collect())
+    }
+}
+
+use mini_langchain_core::embedding::{Embeddings, MockEmbeddings as CoreMockEmbeddings};
+use mini_langchain_core::vectorstore::{VectorStore, InMemoryVectorStore as CoreInMemoryVectorStore};
+
+#[napi]
+pub struct MockEmbeddings {
+    inner: Arc<CoreMockEmbeddings>,
+}
+
+#[napi]
+impl MockEmbeddings {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: Arc::new(CoreMockEmbeddings),
+        }
+    }
+
+    #[napi]
+    pub async fn embed_query(&self, text: String) -> Result<Vec<f64>> {
+        // Napi doesn't support f32 directly in arrays often, or prefers f64 in JS.
+        // Rust vec is f32. conversion needed.
+        let  res = self.inner.embed_query(&text).await.map_err(|e| Error::from_reason(e.to_string()))?;
+        Ok(res.into_iter().map(|v| v as f64).collect())
+    }
+}
+
+#[napi]
+pub struct InMemoryVectorStore {
+    inner: Arc<CoreInMemoryVectorStore>,
+}
+
+#[napi]
+impl InMemoryVectorStore {
+    #[napi(constructor)]
+    pub fn new(embeddings: &MockEmbeddings) -> Self {
+        Self {
+            inner: Arc::new(CoreInMemoryVectorStore::new(embeddings.inner.clone())),
+        }
+    }
+
+    #[napi]
+    pub async fn add_documents(&self, docs: Vec<&Document>) -> Result<Vec<String>> {
+         // Need to clone inner documents
+         let core_docs: Vec<CoreDocument> = docs.iter().map(|d| d.inner.clone()).collect();
+         self.inner.add_documents(&core_docs).await.map_err(|e| Error::from_reason(e.to_string()))
+    }
+
+    #[napi]
+    pub async fn similarity_search(&self, query: String, k: u32) -> Result<Vec<Document>> {
+         let results = self.inner.similarity_search(&query, k as usize).await
+            .map_err(|e| Error::from_reason(e.to_string()))?;
+            
+         Ok(results.into_iter().map(|d| Document { inner: d }).collect())
+    }
+}
+
+
+use mini_langchain_core::agent::{AgentExecutor as CoreAgentExecutor};
+
+#[napi]
+pub struct AgentExecutor {
+    inner: Arc<CoreAgentExecutor>,
+}
+
+#[napi]
+impl AgentExecutor {
+    #[napi(constructor)]
+    pub fn new(llm: &SambaNovaLLM) -> Self {
+        // Currently only supporting SambaNovaLLM for Node
+        Self {
+            inner: Arc::new(CoreAgentExecutor::new(llm.inner.clone())),
+        }
+    }
+
+    #[napi]
+    pub async fn execute(&self, input: String) -> Result<String> {
+        self.inner.execute(&input).await.map_err(|e| Error::from_reason(e.to_string()))
     }
 }
 
