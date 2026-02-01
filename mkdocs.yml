@@ -1,20 +1,31 @@
 site_name: Mini LangChain
-site_description: Low-cost, cross-language LangChain implementation.
+site_description: High-performance, cross-language LLM orchestration library with Rust core.
 site_author: GrandpaEJ
+site_url: https://grandpaej.github.io/Mini_LangChain/
 
 theme:
   name: material
   palette: 
     - scheme: default
-      primary: teal
-      accent: purple
+      primary: light blue
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
     - scheme: slate
-      primary: teal
-      accent: lime
+      primary: light blue
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   features:
     - content.code.copy
+    - content.code.annotate
     - navigation.tabs
     - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
 
 nav:
   - Home: index.md
@@ -24,17 +35,30 @@ nav:
     - Examples: python/examples.md
   - Node.js SDK:
     - Getting Started: node/getting_started.md
+    - API Reference: node/api.md
+    - Examples: node/examples.md
   - Rust Core:
     - Architecture: rust/architecture.md
     - API Reference: rust/api.md
   - Benchmarks: benchmarks/index.md
   - Contributing: contributing.md
+  - Changelog: changelog.md
 
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
+      pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - admonition
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
