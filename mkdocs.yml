@@ -1,0 +1,38 @@
+site_name: Mini LangChain
+site_description: Low-cost, cross-language LangChain implementation.
+site_author: GrandpaEJ
+
+theme:
+  name: material
+  palette: 
+    - scheme: default
+      primary: teal
+      accent: purple
+    - scheme: slate
+      primary: teal
+      accent: lime
+  features:
+    - content.code.copy
+    - navigation.tabs
+    - navigation.sections
+
+nav:
+  - Home: index.md
+  - Python SDK:
+    - Getting Started: python/getting_started.md
+    - API Reference: python/api.md
+    - Examples: python/examples.md
+  - Rust Core:
+    - Architecture: rust/architecture.md
+    - API Reference: rust/api.md
+  - Benchmarks: benchmarks/index.md
+  - Contributing: contributing.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
