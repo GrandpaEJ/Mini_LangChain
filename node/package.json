@@ -3,18 +3,31 @@
     "version": "0.1.0",
     "main": "index.js",
     "types": "index.d.ts",
-    "napi": {
-        "name": "mini-langchain",
-        "triples": {
-            "defaults": true,
-            "additional": [
-                "x86_64-unknown-linux-musl",
-                "aarch64-unknown-linux-gnu",
-                "i686-pc-windows-msvc",
-                "aarch64-pc-windows-msvc"
-            ]
-        }
+    "description": "High-performance, cross-language LLM orchestration library with Rust core (Node.js bindings).",
+    "keywords": [
+        "langchain",
+        "llm",
+        "rust",
+        "napi-rs",
+        "ai",
+        "rag",
+        "agent",
+        "sambanova",
+        "openai",
+        "anthropic",
+        "gemini"
+    ],
+    "author": "GrandpaEJ",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/GrandpaEJ/Mini_LangChain"
     },
+    "files": [
+        "index.js",
+        "index.d.ts",
+        "mini-langchain.*.node"
+    ],
     "scripts": {
         "build": "napi build --platform --release",
         "build:debug": "napi build --platform",
